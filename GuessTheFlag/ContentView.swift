@@ -10,9 +10,28 @@ import SwiftUI
 struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0..<3)
+    @State private var wrongSelection = -1
     
     @State private var showingScore = false
-    @State private var scoreTitle = ""
+    @State private var scoreTitle: String = ""
+    @State private var totalScore: Int = 0
+    
+    private var scoreAlertMessage: String {
+        if scoreTitle == "Wrong" {
+            return """
+            Score: \(totalScore)
+            That is flag of \(countries[wrongSelection]).
+            """
+        } else if scoreTitle == "Correct" {
+            return "Score: \(totalScore)"
+        } else {
+            return ""
+        }
+    }
+    
+    private var maxGame: Int = 8
+    @State private var game: Int = 1
+    @State private var showingGameResult: Bool = false
     
     var body: some View {
         ZStack {
@@ -50,32 +69,57 @@ struct ContentView: View {
                 .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 Spacer()
-                Text("Score: ???")
+                Text("Score: \(totalScore)\nGame: \(game) / \(maxGame)")
                     .foregroundColor(.white)
                     .font(.title.bold())
                 Spacer()
             }
         }
         .ignoresSafeArea()
-        .alert("Result", isPresented: $showingScore) {
+        .alert(scoreTitle, isPresented: $showingScore) {
             Button("Ok") { askQuestion() }
         } message: {
-            Text(scoreTitle)
+            Text(scoreAlertMessage)
+        }
+        .alert("Game Over", isPresented: $showingGameResult) {
+            Button("Restart") {
+                reset()
+            }
+        } message: {
+            Text("Good job!\nScore: \(totalScore)")
         }
     }
     
     func askQuestion() {
+        //Game is finished
+        if game == maxGame {
+            showingGameResult = true
+            return;
+        }
+        game += 1
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
     }
     
     func flagTapped(_ number: Int) {
         if number == self.correctAnswer {
-            scoreTitle = "correct"
+            wrongSelection = -1
+            scoreTitle = "Correct"
+            totalScore += 100
         } else {
-            scoreTitle = "wrong"
+            wrongSelection = number
+            scoreTitle = "Wrong"
+            totalScore -= 100
         }
         showingScore.toggle()
+    }
+    
+    func reset() {
+        game = 0
+        totalScore = 0
+        wrongSelection = -1
+        scoreTitle = ""
+        askQuestion()
     }
 }
 
