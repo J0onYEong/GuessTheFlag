@@ -7,3 +7,8 @@ Project2 in HackingWithSwift
 - alert창을 활용하여 정답유무와 최종 결과화면을 표시하는 방식으로 동작한다.
 
 [프로젝트 학습정리 Notion링크](https://cactus-snout-d26.notion.site/Projcet2-Guess-the-flag-a496f9fc2c5847c1b19ab362e73f8624)
+ 
+# 추가사항
+- 깃팔을 선택할 시 애니메이션을 추가하였다. 아래 링크의 Challenge목차 부분에서 영상 확인이 가능하다.
+
+[애니메이션 학습정리 Notion링크](https://cactus-snout-d26.notion.site/T-Project6-Animation-ed8a20e4d4c642b2ab58710779c08cd3)
