@@ -11,6 +11,8 @@ struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0..<3)
     @State private var wrongSelection = -1
+    @State private var isButtonTapped = false
+    @State private var tappedNumber = -1
     
     @State private var showingScore = false
     @State private var scoreTitle: String = ""
@@ -33,7 +35,6 @@ struct ContentView: View {
     @State private var game: Int = 1
     @State private var showingGameResult: Bool = false
     
-    // View
     struct FlageImage: View {
         var name: String
         var body: some View {
@@ -67,9 +68,12 @@ struct ContentView: View {
                         number in
                         Button {
                             flagTapped(number)
-                        } label: {
+                        }label: {
                             FlageImage(name: countries[number])
                         }
+                            .rotation3DEffect(.degrees(isButtonTapped && tappedNumber == number ? 0.0 : 360.0), axis: (x: 0, y: 1, z: 0))
+                            .opacity(isButtonTapped && tappedNumber != number ? 0.25 : 1.0)
+                            .scaleEffect(isButtonTapped && tappedNumber != number ? 0.75 : 1.0)
                     }
                 }.padding()
                 .frame(maxWidth: .infinity)
@@ -107,9 +111,15 @@ struct ContentView: View {
         game += 1
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        isButtonTapped = false
+        tappedNumber = -1
     }
     
     func flagTapped(_ number: Int) {
+        withAnimation {
+            isButtonTapped = true
+            tappedNumber = number
+        }
         if number == self.correctAnswer {
             wrongSelection = -1
             scoreTitle = "Correct"
